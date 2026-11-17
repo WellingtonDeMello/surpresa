@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#fff0f5">
+<title>Uma perguntinha ❤️</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;min-height:100svh;overflow:hidden;background:linear-gradient(145deg,#fff5f7,#ffe1ec 55%,#f8cfe0);color:#542b42;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+main{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:24px}
+.card{width:min(100%,440px);text-align:center;padding:36px 22px 30px;background:#ffffffc9;border:1px solid #fff;border-radius:30px;box-shadow:0 20px 70px #a94f7430;position:relative}
+.heart{font-size:54px;line-height:1;margin-bottom:22px;animation:pulse 1.5s infinite}
+h1{font-family:Georgia,serif;font-size:clamp(30px,8vw,43px);line-height:1.12;font-weight:500;margin:0 0 13px}
+p{font-size:15px;line-height:1.6;color:#896477;margin:0 auto;max-width:310px}
+.actions{height:150px;position:relative;margin-top:24px}
+button{border:0;border-radius:999px;padding:15px 27px;font-size:16px;font-weight:750;box-shadow:0 8px 20px #8d41632b;touch-action:manipulation}
+#yes{position:absolute;left:50%;top:20px;transform:translateX(-110%);background:#e94f8a;color:white;min-width:120px}
+#no{position:absolute;left:50%;top:20px;transform:translateX(10%);background:#f2e8ed;color:#745466;min-width:120px;transition:left .16s ease,top .16s ease}
+.hint{font-size:11px;color:#b48a9f;margin-top:2px}
+#success{display:none}
+#success h1{color:#d83e7c}
+.big{font-size:66px;margin:4px 0 18px;animation:pop .5s ease}
+.message{background:#fff3f7;border-radius:18px;padding:18px;margin-top:22px;color:#795168;font:15px/1.7 Georgia,serif}
+.again{margin-top:22px;background:#f6dce7;color:#77465d;box-shadow:none;font-size:13px}
+.float{position:fixed;bottom:-40px;pointer-events:none;animation:rise 3.8s linear forwards;z-index:5}
+@keyframes pulse{50%{transform:scale(1.12)}}
+@keyframes rise{to{transform:translateY(-110svh) rotate(35deg);opacity:0}}
+@keyframes pop{from{transform:scale(.5);opacity:0}to{transform:scale(1);opacity:1}}
+</style>
+</head>
+<body>
+<main>
+ <section class="card" id="question">
+  <div class="heart">💗</div>
+  <h1>Tenho uma pergunta<br>muito importante...</h1>
+  <p>Depois de tudo que a gente vive, você aceita continuar sendo minha namorada e me aguentar por muito mais tempo?</p>
+  <div class="actions" id="arena">
+   <button id="yes">SIM ❤️</button>
+   <button id="no">NÃO 💔</button>
+  </div>
+  <div class="hint" id="hint">Escolha com sabedoria... 👀</div>
+ </section>
+ <section class="card" id="success">
+  <div class="big">🥹💖</div>
+  <h1>EU SABIAAA!</h1>
+  <p>Essa era a resposta que eu queria ver.</p>
+  <div class="message">
+   Ainda bem que você escolheu SIM, porque eu quero continuar dividindo meus dias, minhas risadas e meus planos com você. Obrigado por ser minha pessoa favorita. Eu te amo! ❤️
+  </div>
+  <button class="again" onclick="location.reload()">Ver a surpresa de novo ↻</button>
+ </section>
+</main>
+<script>
+const no=document.getElementById('no');
+const yes=document.getElementById('yes');
+const arena=document.getElementById('arena');
+const hint=document.getElementById('hint');
+let attempts=0;
+function moveNo(e){
+  if(e){e.preventDefault();e.stopPropagation()}
+  attempts++;
+  const area=arena.getBoundingClientRect();
+  const btn=no.getBoundingClientRect();
+  const maxX=Math.max(0,area.width-btn.width);
+  const maxY=Math.max(0,area.height-btn.height);
+  let x,y;
+  // Sorteia uma posição nova, evitando ficar perto do SIM.
+  for(let i=0;i<20;i++){
+    x=Math.random()*maxX;
+    y=Math.random()*maxY;
+    const yesRect=yes.getBoundingClientRect();
+    const absX=area.left+x, absY=area.top+y;
+    const far=Math.abs((absX+btn.width/2)-(yesRect.left+yesRect.width/2))>95 ||
+               Math.abs((absY+btn.height/2)-(yesRect.top+yesRect.height/2))>45;
+    if(far)break;
+  }
+  no.style.transform='none';
+  no.style.left=x+'px';
+  no.style.top=y+'px';
+  const lines=['UEUEUEUE','Tenta de novo','NÃO ACEITO NÃO','Tem certeza?','OIA MUIE'];
+  hint.textContent=lines[Math.min(attempts-1,lines.length-1)];
+}
+no.addEventListener('pointerdown',moveNo);
+no.addEventListener('click',moveNo);
+no.addEventListener('mouseenter',()=>{if(matchMedia('(hover:hover)').matches)moveNo()});
+yes.addEventListener('click',()=>{
+ document.getElementById('question').style.display='none';
+ document.getElementById('success').style.display='block';
+ for(let i=0;i<45;i++)setTimeout(heart,i*45);
+});
+function heart(){
+ const el=document.createElement('div');el.className='float';
+ el.textContent=['💗','💖','💕','❤️','✨'][Math.floor(Math.random()*5)];
+ el.style.left=Math.random()*100+'vw';
+ el.style.fontSize=(18+Math.random()*20)+'px';
+ el.style.animationDuration=(3+Math.random()*2)+'s';
+ document.body.appendChild(el);setTimeout(()=>el.remove(),5500);
+}
+</script>
+</body>
+</html>
